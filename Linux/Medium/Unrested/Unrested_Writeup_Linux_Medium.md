@@ -1,7 +1,7 @@
 ﻿<h1 align="center">HackTheBox Unrested Writeup</h1>
 
 
-![Unrested Box](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/0_Unrested_box.png?raw=trueg)
+![Unrested Box](/Linux/Medium/Unrested/Screenshots/0_Unrested_box.png)
 
 
 **Table of Contents**
@@ -65,15 +65,15 @@ We attempt to use the supplied credentials on the SSH service but are unsuccessf
 
 We visit the web server on port 80 and discover that it is running a Zabbix Monitoring System.
 
-![Zabbix Website](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/1_Zabbix.png?raw=true)
+![Zabbix Website](/Linux/Medium/Unrested/Screenshots/1_Zabbix.png?raw=true)
 
 We attempt to log into the **Zabbix web server** using the supplied credentials and succeed, landing on the dashboard of the Matthew user.
 
-![Zabbix Dashboard](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/2_Zabbix_login.png?raw=true) 
+![Zabbix Dashboard](/Linux/Medium/Unrested/Screenshots/2_Zabbix_login.png?raw=true) 
 
 We scroll down a bit and discover that the Zabbix instance is running version 7.0.0.
 
-![Zabbix Version](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/3_Zabbix_version.png?raw=true)
+![Zabbix Version](/Linux/Medium/Unrested/Screenshots/3_Zabbix_version.png?raw=true)
 
 After a bit of research, we find that this version is vulnerable to SQL injection and has been assigned **CVE-2024-42327.**
 # <a name="_toc194153066"></a>**CVE-2024-42327**
@@ -97,7 +97,7 @@ We then leverage this public POC for this CVE, [CVE-2024-42327_Zabbix_SQLI.py](h
 
 In our case, this POC is somewhat inconsistent due to the **`userids`** parameter in the JSON, so we remove it from the script. Additionally, we need to add **`"editable":1`** to the JSON to make the SQLi work. We change it twice in the script: first in the **`sqli_leak_credentials`** function and second in the **`sqli_leak_session_tokens`** function.
 
-![4_POC_SQLI.png](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/4_POC_SQLI.png?raw=true)
+![4_POC_SQLI.png](/Linux/Medium/Unrested/Screenshots/4_POC_SQLI.png?raw=true)
 
 After a few small changes, we can now use this script with the supplied credentials to dump the database.
 
@@ -126,17 +126,17 @@ With the newly gained credentials, we can leverage the **Admin API token** to ga
 To do so, we refer to this exploit: [ZabbixAPIAbuse.py](https://github.com/Diefunction/ZabbixAPIAbuse/blob/master/ZabbixAPIAbuse.py).
 First, we need the **`hostid`** and **`interfaceid`**. We can retrieve both using the **`hostinterface.get`** method shown in the exploit.
 
-![Host Id Get](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/5_Hostid.png?raw=true)
+![Host Id Get](/Linux/Medium/Unrested/Screenshots/5_Hostid.png?raw=true)
 
 Now that we know the **`hostid`** is **10084** and the **`interfaceid`** is **1**, we can use the **`item.create`** method to create a simple bash reverse shell.
 
-![Reverse Shell Create](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/6_Reverseshell.png?raw=true)
+![Reverse Shell Create](/Linux/Medium/Unrested/Screenshots/6_Reverseshell.png?raw=true)
 
 After preparing the reverse shell, we set up our Netcat listener using **`nc -lvnp 4444`** and send the request containing the reverse shell.
 
 After roughly 10 seconds, the reverse shell connects to our listener, and we have successfully achieved RCE.
 
-![Reverse Shell Connect](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/7_Reverseshell_connect.png?raw=true)
+![Reverse Shell Connect](/Linux/Medium/Unrested/Screenshots/7_Reverseshell_connect.png?raw=true)
 
 Now that we have a foothold on the system as the zabbix user, we immediately look for ways to escalate our privileges.
 
@@ -171,7 +171,7 @@ Interactive mode is disabled for security reasons.
 
 We enumerate further and find that the **`/usr/bin/nmap`** binary is actually a bash script.
 
-![Nmap Bash Script](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/8_nmap_script.png?raw=true)
+![Nmap Bash Script](/Linux/Medium/Unrested/Screenshots/8_nmap_script.png?raw=true)
 
 The script checks for restricted options that include the methods provided by **GTFOBins**.
 
@@ -189,13 +189,13 @@ If the script detects one of these flags, it will echo “disabled for security 
 
 After some research, we discover that we can leverage the **`--datadir`** flag. Normally, nmap searches through the standard nmap path **`/usr/share/nmap`**, but with the **`--datadir`** flag, we can specify the directory **`nmap`** searches through to execute the **`nmap`** binary with the necessary scripts.
 
-![Nmap Script Path](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/9_usr_share_nmap.png?raw=true)
+![Nmap Script Path](/Linux/Medium/Unrested/Screenshots/9_usr_share_nmap.png?raw=true)
 
 We look through the standard path **`/usr/share/nmap`** and discover several scripts. One in particular stands out: the **`nse_main.lua`**, which is used by **`nmap`** every time we use the script flag **`-sC`**.
 
-![Datadir Description](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/10_datadir.png?raw=true)
+![Datadir Description](/Linux/Medium/Unrested/Screenshots/10_datadir.png?raw=true)
 
-![nse.main.lua Description](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/11_nse_main_lua.png?raw=true)
+![nse.main.lua Description](/Linux/Medium/Unrested/Screenshots/11_nse_main_lua.png?raw=true)
 
 
 
@@ -230,9 +230,9 @@ Aborted
 
 To test if we successfully added the public key to the **`authorized_keys`** of the root user, we try to log into SSH with the **`-i`** flag for the private key that we created with the **`ssh-keygen`** command as well.
 
-![Root SSH Access](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/12_root_ssh.png?raw=true)
+![Root SSH Access](/Linux/Medium/Unrested/Screenshots/12_root_ssh.png?raw=true)
 
 We successfully log into SSH as the **root** user and can read the **`root.txt`** file, completing the machine.
 
-![Root.txt](https://github.com/HaidarCoffee/HTBWriteups/blob/main/Linux/Medium/Unrested/Screenshots/13_root_txt.png?raw=true)
+![Root.txt](/Linux/Medium/Unrested/Screenshots/13_root_txt.png?raw=true)
 
