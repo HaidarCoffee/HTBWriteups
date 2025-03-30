@@ -65,15 +65,15 @@ We attempt to use the supplied credentials on the SSH service but are unsuccessf
 
 We visit the web server on port 80 and discover that it is running a Zabbix Monitoring System.
 
-![Zabbix Website](/Linux/Medium/Unrested/Screenshots/1_Zabbix.png?raw=true)
+![Zabbix Website](/Linux/Medium/Unrested/Screenshots/1_Zabbix.png)
 
 We attempt to log into the **Zabbix web server** using the supplied credentials and succeed, landing on the dashboard of the Matthew user.
 
-![Zabbix Dashboard](/Linux/Medium/Unrested/Screenshots/2_Zabbix_login.png?raw=true) 
+![Zabbix Dashboard](/Linux/Medium/Unrested/Screenshots/2_Zabbix_login.png) 
 
 We scroll down a bit and discover that the Zabbix instance is running version 7.0.0.
 
-![Zabbix Version](/Linux/Medium/Unrested/Screenshots/3_Zabbix_version.png?raw=true)
+![Zabbix Version](/Linux/Medium/Unrested/Screenshots/3_Zabbix_version.png)
 
 After a bit of research, we find that this version is vulnerable to SQL injection and has been assigned **CVE-2024-42327.**
 # <a name="_toc194153066"></a>**CVE-2024-42327**
