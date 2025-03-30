@@ -202,7 +202,7 @@ We look through the standard path **`/usr/share/nmap`** and discover several scr
 
 
 
-Now that we have all the information we need to escalate our privileges with sudo nmap, we need to decide on a method to grant ourselves root access. We decide to do so by inserting our freshly made SSH key into the **`authorized_keys`** file in the **`root.ssh`** directory.
+Now that we have all the information we need to escalate our privileges with sudo nmap, we need to decide on a method to grant ourselves root access. We decide to do so by inserting our freshly made SSH key into the **`authorized_keys`** file in the **`root/.ssh`** directory.
 
 First, we need to create a small **ECDSA 256-bit SSH key**.
 ```
